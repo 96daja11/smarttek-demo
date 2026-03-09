@@ -601,6 +601,219 @@
       width: 10px; height: 10px;
       border-radius: 50%;
     }
+
+    /* ── FINDING DETAIL CARDS ────────────────────────────────── */
+    .detail-card {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: 10px;
+      margin-bottom: 28px;
+      page-break-inside: avoid;
+      overflow: hidden;
+    }
+
+    .detail-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--slate);
+    }
+
+    .detail-idx {
+      font-family: var(--font-serif);
+      font-size: 18pt;
+      color: var(--slate);
+      line-height: 1;
+      min-width: 28px;
+    }
+
+    .detail-card-title {
+      font-family: var(--font-sans);
+      font-size: 10pt;
+      font-weight: 600;
+      color: var(--white);
+      flex: 1;
+    }
+
+    .detail-tag {
+      font-family: var(--font-mono);
+      font-size: 6.5pt;
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--slate);
+      padding: 2px 8px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .detail-body {
+      display: flex;
+    }
+
+    .detail-image-panel {
+      flex: 0 0 62%;
+      padding: 12px;
+      border-right: 1px solid var(--slate);
+    }
+
+    .detail-image-panel img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .detail-image-placeholder {
+      background: var(--navy-3);
+      border: 1px dashed var(--slate);
+      border-radius: 4px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+    }
+
+    .detail-explanation-panel {
+      flex: 0 0 38%;
+      padding: 14px 16px;
+    }
+
+    .defect-heading {
+      font-family: var(--font-serif);
+      font-size: 11.5pt;
+      font-weight: 400;
+      color: var(--white);
+      margin: 0 0 12px;
+      line-height: 1.3;
+    }
+
+    .physics-block {
+      margin-bottom: 10px;
+    }
+
+    .physics-block h5 {
+      font-family: var(--font-mono);
+      font-size: 6pt;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 5px;
+    }
+
+    .physics-block p {
+      font-size: 7.5pt;
+      color: var(--light);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .risk-block {
+      background: rgba(155,29,29,0.08);
+      border-left: 2px solid rgba(200,60,60,0.35);
+      border-radius: 0 4px 4px 0;
+      padding: 7px 10px;
+      margin-bottom: 10px;
+    }
+
+    .risk-block h5 {
+      font-family: var(--font-mono);
+      font-size: 6pt;
+      color: #e07070;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 4px;
+    }
+
+    .risk-block p {
+      font-size: 7.5pt;
+      color: #c8a0a0;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .temp-chips {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .temp-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--slate);
+      border-radius: 5px;
+      padding: 5px 10px;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .temp-chip .tc-val {
+      font-family: var(--font-mono);
+      font-size: 10pt;
+      color: var(--white);
+      font-weight: 500;
+      display: block;
+      line-height: 1.2;
+    }
+
+    .temp-chip .tc-lbl {
+      font-family: var(--font-mono);
+      font-size: 5.5pt;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .detail-action-box {
+      background: rgba(0,212,170,0.05);
+      border: 1px solid rgba(0,212,170,0.14);
+      border-radius: 5px;
+      padding: 9px 11px;
+    }
+
+    .detail-action-box .action-label {
+      font-family: var(--font-mono);
+      font-size: 6pt;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .detail-action-box p {
+      font-size: 7.5pt;
+      color: var(--light);
+      margin: 0 0 7px;
+    }
+
+    .urgency-cost-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 7pt;
+    }
+
+    .urgency-pill {
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .urgency-pill.KRITISK { background: rgba(155,29,29,0.35); color: #ff9999; }
+    .urgency-pill.HÖG     { background: rgba(181,69,27,0.35); color: #ffbb88; }
+    .urgency-pill.MEDEL   { background: rgba(200,125,47,0.35); color: #ffdd99; }
+    .urgency-pill.LÅG     { background: rgba(45,106,79,0.35);  color: #99ddbb; }
+
+    .cost-accent { color: var(--accent); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -818,6 +1031,134 @@
   <div class="page-footer">
     <span>SmartTek AB · DJI Mavic 3 Thermal · FLIR R-JPEG</span>
     <span>{{ run_id }} · Sida 4</span>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 4b – FINDING DETAILS                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+{% if detail_panels %}
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">04b · Fynd i detalj</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Fynd i detalj – annoterade bilder</h2>
+  <p>
+    Varje kritiskt och högt prioriterat fynd visas med annoterad termisk bild,
+    temperaturfördelning och en förklaring av varför just detta värmemönster
+    utgör ett problemområde. Terminologin är förankrad i byggfysik.
+  </p>
+
+  {% for panel in detail_panels %}
+  <div class="detail-card">
+
+    <!-- Card header -->
+    <div class="detail-card-header">
+      <div class="detail-idx">{{ panel.idx }}</div>
+      <div style="flex:1">
+        <div class="detail-card-title">
+          <span class="badge badge-{{ panel.severity }}">{{ panel.severity }}</span>
+          &nbsp;{{ panel.type }}
+        </div>
+        <div style="font-family:var(--font-mono); font-size:6.5pt; color:var(--muted); margin-top:2px;">
+          {{ panel.finding_id }}
+        </div>
+      </div>
+      <span class="detail-tag">{{ panel.source }}</span>
+      <span class="detail-tag">{{ panel.confidence_pct }}% konfidens</span>
+      {% if panel.area_m2 %}<span class="detail-tag">{{ "%.1f"|format(panel.area_m2) }} m²</span>{% endif %}
+    </div>
+
+    <!-- Card body: image + explanation side by side -->
+    <div class="detail-body">
+
+      <!-- Left: annotated thermal image -->
+      <div class="detail-image-panel">
+        {% if panel.has_image %}
+        <img src="{{ panel.annotated_image }}"
+             alt="Annoterad termisk bild – {{ panel.type }}">
+        {% else %}
+        <div class="detail-image-placeholder">Källbild ej tillgänglig</div>
+        {% endif %}
+        {% if panel.lat %}
+        <div style="font-family:var(--font-mono); font-size:6pt; color:var(--muted);
+                    margin-top:6px; text-align:center;">
+          GPS {{ "%.5f"|format(panel.lat) }}°N &nbsp;·&nbsp; {{ "%.5f"|format(panel.lon) }}°E
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Right: explanation -->
+      <div class="detail-explanation-panel">
+        <h3 class="defect-heading">{{ panel.explanation.heading }}</h3>
+
+        <div class="physics-block">
+          <h5>Varför syns detta i termisk kamera?</h5>
+          <p>{{ panel.explanation.physics }}</p>
+        </div>
+
+        <div class="risk-block">
+          <h5>Risk om ej åtgärdat</h5>
+          <p>{{ panel.explanation.risk }}</p>
+        </div>
+
+        {% if panel.max_temp or panel.area_m2 %}
+        <div class="temp-chips">
+          {% if panel.max_temp %}
+          <div class="temp-chip">
+            <span class="tc-val">{{ "%.1f"|format(panel.max_temp) }}°C</span>
+            <span class="tc-lbl">Max temp</span>
+          </div>
+          {% endif %}
+          {% if panel.delta_temp %}
+          <div class="temp-chip">
+            <span class="tc-val" style="color:{{ panel.severity_color }}">
+              Δ{{ "%.1f"|format(panel.delta_temp) }}°C
+            </span>
+            <span class="tc-lbl">Avvikelse</span>
+          </div>
+          {% endif %}
+          {% if panel.area_m2 %}
+          <div class="temp-chip">
+            <span class="tc-val">{{ "%.1f"|format(panel.area_m2) }} m²</span>
+            <span class="tc-lbl">Berörd yta</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="detail-action-box">
+          <span class="action-label">Rekommenderad åtgärd</span>
+          <p>{{ panel.action }}</p>
+          <div class="urgency-cost-row">
+            {% if panel.urgency_weeks %}
+            <span class="urgency-pill {{ panel.severity }}">
+              {% if panel.urgency_weeks <= 2 %}Omedelbar åtgärd
+              {% elif panel.urgency_weeks <= 8 %}Inom {{ panel.urgency_weeks }} veckor
+              {% else %}Inom {{ (panel.urgency_weeks / 4)|int }} månader
+              {% endif %}
+            </span>
+            {% endif %}
+            <span class="cost-accent">~{{ panel.cost_sek }} kr</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {% if loop.index % 2 == 0 and not loop.last %}
+  <div style="page-break-after: always;"></div>
+  {% endif %}
+
+  {% endfor %}
+
+  <div class="page-footer">
+    <span>SmartTek AB · Termisk analys – DJI + FLIR-sensor · Inferno-färgskala</span>
+    <span>{{ run_id }} · Fynd i detalj · Konfidentiellt</span>
   </div>
 </div>
 {% endif %}

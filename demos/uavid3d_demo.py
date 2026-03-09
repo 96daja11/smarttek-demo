@@ -39,7 +39,7 @@ logger = logging.getLogger("uavid3d_demo")
 
 DATASET_ROOT = PROJECT_ROOT / "data" / "datasets" / "uavid3d"
 OUTPUT_DIR   = PROJECT_ROOT / "data" / "outputs" / "uavid3d"
-MAX_IMAGES   = 15
+MAX_IMAGES   = 20
 
 # Blume commercial building survey location (Bochum / NRW area, Germany)
 CENTER_LAT = 51.4818
@@ -138,10 +138,32 @@ def main() -> str:
 
     logger.info(f"UAVID3D: {len(all_thermal)} thermal images found in total")
 
-    # Select MAX_IMAGES evenly-spaced images across all sources
-    step = max(1, len(all_thermal) // MAX_IMAGES)
-    selected = all_thermal[::step][:MAX_IMAGES]
-    logger.info(f"  Selected {len(selected)} images (every {step}th)")
+    # Prefer images from the central 40-80 % of each source list – the drone
+    # is directly overhead the building during this portion of the flight,
+    # giving the richest roof-level thermal data.
+    def _central_slice(imgs: list, n: int) -> list:
+        if len(imgs) <= n:
+            return imgs
+        lo = int(len(imgs) * 0.30)
+        hi = int(len(imgs) * 0.85)
+        mid = imgs[lo:hi]
+        step = max(1, len(mid) // n)
+        return mid[::step][:n]
+
+    # Split back into Blume and Olympic for independent central sampling
+    blume_imgs   = sorted(BLUME_THERMAL_DIR.glob("DJI_*.jpg")) if BLUME_THERMAL_DIR.exists() else []
+    olympic_imgs = _collect_olympic_images()
+
+    blume_sel   = _central_slice(blume_imgs,   MAX_IMAGES // 2)
+    olympic_sel = _central_slice(olympic_imgs, MAX_IMAGES // 2)
+    selected    = blume_sel + olympic_sel
+
+    if not selected:                         # fallback: just use all_thermal
+        step     = max(1, len(all_thermal) // MAX_IMAGES)
+        selected = all_thermal[::step][:MAX_IMAGES]
+
+    logger.info(f"  Selected {len(selected)} images "
+                f"(Blume: {len(blume_sel)}, Olympic: {len(olympic_sel)})")
 
     thermal_paths = [str(p) for p in selected]
 

@@ -34,6 +34,156 @@ SOURCE_LABELS = {
     "Kombinerad":"Kombinerad",
 }
 
+# ── Physics-based explanations per defect type ──────────────────────────────
+DEFECT_EXPLANATIONS: dict = {
+    "water_damage": {
+        "hotspot": {
+            "heading": "Varmfläck – fuktsignatur detekterad",
+            "physics": (
+                "Vatten har ~4× högre värmekapacitet än de flesta byggnadsmaterial. "
+                "Under solinstrålning absorberar fuktmättade partier mer värme och avger "
+                "den långsammare – detta syns som ett ljust (varmt) område i IR-kameran. "
+                "En avvikelse på mer än 8–10 °C mot omgivande yta indikerar sannolikt "
+                "aktivt vattenintrång bakom tätskiktet."
+            ),
+            "risk": (
+                "Okontrollerat fuktintrång leder till mögelbildning, armeringsrost och "
+                "nedbrytning av isolering. Utan åtgärd eskalerar skadan exponentiellt – "
+                "en liten fuktkälla kan orsaka skador för hundratusentals kronor på "
+                "1–2 år om den lämnas obehandlad."
+            ),
+        },
+        "default": {
+            "heading": "Vattenskada – visuell och termisk bekräftelse",
+            "physics": (
+                "Vattenskadan identifierades kombinerat via AI-bildanalys (sprickor, "
+                "missfärgning) och termisk avvikelse. Fuktigt material har en annorlunda "
+                "emissivitet och värmekapacitet, vilket skapar ett distinkt mönster i "
+                "IR-kameran som skiljer sig från torr omgivning."
+            ),
+            "risk": (
+                "Fortskridande vattenskada orsakar strukturella skador, mögelbildning "
+                "och förstörd värmeisolering. Kostnaden ökar snabbt utan tidig åtgärd."
+            ),
+        },
+    },
+    "delamination": {
+        "cold_bridge": {
+            "heading": "Köldbrygga – tätskikt avlöst eller isolering saknas",
+            "physics": (
+                "När tätskiktet lossnar bildas ett luftgap mot underlaget. Luft är en "
+                "god termisk isolator, men avlöst yta ändrar sin termiska massa och beter "
+                "sig annorlunda än omgivande intakt konstruktion. Under dagtid – när "
+                "takytan värms av solen – kyls den avlösta ytan ned snabbare och syns "
+                "som en kall region i IR-kameran. Detsamma gäller köldbryggor i "
+                "betong/metall som leder värme förbi isoleringen."
+            ),
+            "risk": (
+                "Avlöst tätskikt exponerar konstruktionen för fukt vid nästa regntillfälle. "
+                "Problemet eskalerar vid frysning/tining – vatten expanderar 9 % vid "
+                "frysning och vidgar avlösningen ytterligare. Köldbryggor ger "
+                "ökad energiförbrukning och risk för kondensskador inifrån."
+            ),
+        },
+        "default": {
+            "heading": "Avlösning av tätskikt",
+            "physics": (
+                "AI-modellen har detekterat bubblor eller separationsmönster i takbeläggningen. "
+                "Termisk analys bekräftar ett onormalt värmemönster – avlöst material "
+                "värms och kyls i en annan takt än omgivande intakt yta, vilket ger "
+                "ett distinkt termiskt kontrastmönster."
+            ),
+            "risk": (
+                "Avlösning utan åtgärd leder till vattenintrång. "
+                "Skadan sprider sig lateralt under tätskiktet och är "
+                "exponentiellt dyrare att åtgärda ju längre den väntar."
+            ),
+        },
+    },
+    "crack": {
+        "default": {
+            "heading": "Strukturell spricka identifierad",
+            "physics": (
+                "AI-modellen har detekterat ett sprickmönster i takbeläggningen eller "
+                "fasadmaterialet. Sprickor uppstår vid termisk expansion och kontraktion "
+                "(temperaturcykler på upp till 70 °C/år), mekanisk belastning eller "
+                "materialutmattning. I IR-bilder syns sprickor ibland som linjer med "
+                "annorlunda emissivitetsprofil – det exponerade materialet under "
+                "sprickan har en annan termisk signatur."
+            ),
+            "risk": (
+                "Sprickor leder in vatten som vid frostcykler expanderar 9 % och "
+                "vidgar sprickan ytterligare. Bärande konstruktionsdelar med sprickor "
+                "ska utredas av konstruktör – risk för strukturell försämring."
+            ),
+        },
+    },
+    "rust": {
+        "default": {
+            "heading": "Rostangrepp på metalldetalj",
+            "physics": (
+                "Järnoxidation (rost) detekterad på avvattningsplåtar, genomföringar "
+                "eller anslutningsdetaljer. Rost är ett elektrokemiskt förlopp som "
+                "accelererar i fuktiga miljöer. I IR-bilder kan rost identifieras via "
+                "annorlunda emissivitet – rostigt järn har betydligt högre emissivitet "
+                "(ε ≈ 0.85–0.95) än blankt metall (ε ≈ 0.05–0.15), vilket påverkar "
+                "temperaturmätningen."
+            ),
+            "risk": (
+                "Järnoxid expanderar 6–8× relativt ursprungsvolymen och trycker bort "
+                "tätningsskikt. Rostade genomföringar är en av de vanligaste läckagekällorna. "
+                "Kompromissar tätningsfunktionen och kan orsaka plötsliga genomläckage."
+            ),
+        },
+    },
+    "vegetation": {
+        "default": {
+            "heading": "Biologisk påväxt detekterad",
+            "physics": (
+                "Mossa, alger eller vegetation detekterad på takytan. "
+                "Biologisk påväxt syns tydligt i RGB-bilder som gröna eller bruna partier. "
+                "I termisk bild uppvisar vegetation en annorlunda emissivitet och "
+                "fuktprofil – organiskt material håller fukt och kyler ytan via "
+                "avdunstning (evapotranspiration), vilket ger lägre yttemperatur "
+                "jämfört med omgivande torr takyta under solinstrålning."
+            ),
+            "risk": (
+                "Rötterna penetrerar mikrosprickor i tätskiktet via kemisk och "
+                "mekanisk nedbrytning. Organiskt material håller fukt mot takytan "
+                "och accelererar biologisk nedbrytning. Fryser fukt bakom "
+                "vegetationen skapar nya sprickor."
+            ),
+        },
+    },
+    "anomaly": {
+        "default": {
+            "heading": "Termisk anomali – orsak okänd",
+            "physics": (
+                "Temperaturen avviker markant från den förväntade jämna profilen "
+                "för takytan. En termisk anomali kan indikera fukt, "
+                "konstruktionsfel, materialbyte, dolda rör/ledningar med "
+                "temperaturavvikelse, eller mekanisk skada. Behöver utredas "
+                "med kompletterande inspektionsmetod."
+            ),
+            "risk": (
+                "Oidentifierade termiska anomalier bör alltid undersökas. "
+                "Orsaken kan vara harmlös (t.ex. materialskarv) men kan "
+                "också vara ett tidigt tecken på allvarligare skada."
+            ),
+        },
+    },
+}
+
+
+def _get_defect_explanation(finding_type: str, anomaly_type: str = "default") -> dict:
+    """Return physics explanation dict for a given defect type + anomaly subtype."""
+    type_map = DEFECT_EXPLANATIONS.get(finding_type, DEFECT_EXPLANATIONS["anomaly"])
+    return type_map.get(anomaly_type, type_map.get("default", {
+        "heading": finding_type.replace("_", " ").title(),
+        "physics": "Avvikelse detekterad via AI-analys eller termisk mätning.",
+        "risk": "Bör inspekteras och åtgärdas vid behov.",
+    }))
+
 
 class ReportResult(BaseModel):
     run_id: str
@@ -349,6 +499,258 @@ def _generate_thermal_comparison(thermal_images: list, rgb_images: list) -> list
     return comparisons
 
 
+def _generate_finding_detail_panel(
+    finding: dict,
+    source_image_path: str,
+    anomaly,
+    finding_idx: int,
+) -> Optional[str]:
+    """Annotated thermal panel: inferno heatmap + highlighted bbox + temperature histogram.
+    Returns base64 PNG data URI, or None on failure."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as mpatches
+        import numpy as np
+        from PIL import Image
+
+        path = Path(source_image_path)
+        if not path.exists():
+            return None
+
+        img = Image.open(path).convert("L")
+        pixel_array = np.array(img, dtype=np.float32)
+        # Map 0–255 → 5–65 °C (reasonable building thermal range)
+        temp_matrix = (pixel_array / 255.0) * 60.0 + 5.0
+        h, w = temp_matrix.shape
+
+        # ── Determine bbox in pixels ────────────────────────────────────────
+        if anomaly and hasattr(anomaly, "bbox") and len(anomaly.bbox) == 4:
+            # Pixel-space bbox from ThermalAnomaly
+            x1_px = max(0, int(anomaly.bbox[0]))
+            y1_px = max(0, int(anomaly.bbox[1]))
+            x2_px = min(w - 1, int(anomaly.bbox[2]))
+            y2_px = min(h - 1, int(anomaly.bbox[3]))
+        else:
+            # Normalized bbox [0-1] from finding
+            bbox = finding.get("bbox", [0.2, 0.2, 0.6, 0.6])
+            if len(bbox) == 4:
+                x1_px = int(float(bbox[0]) * w)
+                y1_px = int(float(bbox[1]) * h)
+                x2_px = int(float(bbox[2]) * w)
+                y2_px = int(float(bbox[3]) * h)
+            else:
+                x1_px, y1_px, x2_px, y2_px = w // 4, h // 4, w * 3 // 4, h * 3 // 4
+
+        # Clamp & ensure minimum size
+        x1_px = max(0, min(x1_px, w - 2))
+        y1_px = max(0, min(y1_px, h - 2))
+        x2_px = max(x1_px + 6, min(x2_px, w - 1))
+        y2_px = max(y1_px + 6, min(y2_px, h - 1))
+
+        # ── Temperature values ──────────────────────────────────────────────
+        if anomaly and hasattr(anomaly, "max_temp"):
+            max_t    = float(anomaly.max_temp)
+            delta_t  = float(anomaly.delta_temp)
+            atype    = anomaly.anomaly_type
+        else:
+            region   = temp_matrix[y1_px:y2_px, x1_px:x2_px]
+            mean_img = float(temp_matrix.mean())
+            r_mean   = float(region.mean()) if region.size > 0 else mean_img
+            max_t    = float(region.max())  if region.size > 0 else mean_img
+            delta_t  = abs(r_mean - mean_img)
+            atype    = "hotspot" if r_mean >= mean_img else "cold_bridge"
+
+        severity = finding.get("severity", "HÖG")
+        highlight = {"KRITISK": "#ff3333", "HÖG": "#ff8833",
+                     "MEDEL": "#ffcc33", "LÅG": "#33cc77"}.get(severity, "#ff8833")
+
+        # ── Figure: 3:1 split ───────────────────────────────────────────────
+        fig = plt.figure(figsize=(13, 5.2), facecolor="#0d1b2a")
+        gs  = fig.add_gridspec(1, 2, width_ratios=[3, 1], wspace=0.05)
+        ax_m = fig.add_subplot(gs[0])   # main thermal
+        ax_h = fig.add_subplot(gs[1])   # histogram
+
+        # ── Main panel ──────────────────────────────────────────────────────
+        ax_m.set_facecolor("#1a2744")
+        im = ax_m.imshow(temp_matrix, cmap="inferno",
+                         vmin=temp_matrix.min(), vmax=temp_matrix.max(),
+                         aspect="auto", interpolation="bilinear")
+
+        # Glow halo
+        ax_m.add_patch(mpatches.FancyBboxPatch(
+            (x1_px - 4, y1_px - 4), (x2_px - x1_px) + 8, (y2_px - y1_px) + 8,
+            boxstyle="round,pad=1", linewidth=7,
+            edgecolor=highlight, facecolor="none", alpha=0.25, zorder=4,
+        ))
+        # Crisp bbox
+        ax_m.add_patch(mpatches.Rectangle(
+            (x1_px, y1_px), x2_px - x1_px, y2_px - y1_px,
+            linewidth=2.2, edgecolor=highlight, facecolor="none", zorder=5,
+        ))
+
+        # Temperature label above/below box
+        cx     = (x1_px + x2_px) / 2
+        sign   = "+" if atype == "hotspot" else "−"
+        lbl_y  = y1_px - 9 if y1_px > 22 else y2_px + 18
+        lbl    = f"{finding.get('type', '')}  {max_t:.1f} °C  Δ{sign}{abs(delta_t):.1f} °C"
+        ax_m.text(cx, lbl_y, lbl, color="white", fontsize=8.5, ha="center",
+                  va="center", fontfamily="monospace",
+                  bbox=dict(boxstyle="round,pad=0.35", facecolor=highlight,
+                            edgecolor="none", alpha=0.92), zorder=10)
+
+        # Severity badge top-left
+        ax_m.text(6, 14, f"#{finding_idx+1:02d}  {severity}", color="white",
+                  fontsize=8, ha="left", fontfamily="monospace",
+                  bbox=dict(boxstyle="round,pad=0.3", facecolor=highlight,
+                            edgecolor="none", alpha=0.9), zorder=10)
+
+        cbar = plt.colorbar(im, ax=ax_m, fraction=0.026, pad=0.012)
+        cbar.set_label("°C", color="#94a3b8", fontsize=8)
+        cbar.ax.yaxis.set_tick_params(color="#64748b", labelsize=7)
+        plt.setp(plt.getp(cbar.ax.axes, "yticklabels"), color="#64748b")
+        cbar.outline.set_edgecolor("#334155")
+
+        conf_pct = finding.get("confidence_pct", 0)
+        ax_m.set_title(
+            f"{severity}  ·  {finding.get('type', '')}  ·  {conf_pct}% konfidensgrad",
+            color="white", fontsize=10, pad=8)
+        ax_m.axis("off")
+
+        # ── Histogram panel ─────────────────────────────────────────────────
+        ax_h.set_facecolor("#0f1923")
+        flat = temp_matrix.flatten()
+        counts, edges = np.histogram(flat, bins=35)
+        centers = (edges[:-1] + edges[1:]) / 2
+        mean_all = float(temp_matrix.mean())
+        bw = (edges[1] - edges[0]) * 0.88
+
+        bar_colors = [
+            "#9b1d1d" if t > mean_all + 10 else
+            "#b5451b" if t > mean_all + 5 else
+            "#c87d2f" if t > mean_all + 1 else
+            "#1e3a8a" if t < mean_all - 5 else
+            "#243852"
+            for t in centers
+        ]
+        ax_h.barh(centers, counts, height=bw, color=bar_colors, edgecolor="none")
+
+        # Anomaly line
+        ax_h.axhline(y=max_t, color=highlight, linewidth=2,
+                     linestyle="--", zorder=5, alpha=0.95)
+        xlim_h = ax_h.get_xlim()
+        ax_h.text(xlim_h[1] * 0.06, max_t + 0.4, f"{max_t:.1f}°C",
+                  color=highlight, fontsize=7.5, va="bottom", fontfamily="monospace")
+
+        # Mean line
+        ax_h.axhline(y=mean_all, color="#00d4aa", linewidth=1.3,
+                     linestyle=":", alpha=0.8, zorder=4)
+        ax_h.text(xlim_h[1] * 0.06, mean_all + 0.4, f"μ {mean_all:.1f}°C",
+                  color="#00d4aa", fontsize=7, va="bottom", fontfamily="monospace")
+
+        ax_h.set_xlabel("Pixlar", color="#64748b", fontsize=7)
+        ax_h.set_ylabel("Temp (°C)", color="#64748b", fontsize=7)
+        ax_h.set_title("Fördelning", color="#94a3b8", fontsize=8.5, pad=5)
+        ax_h.tick_params(colors="#64748b", labelsize=6.5)
+        for s in ["bottom", "left"]:
+            ax_h.spines[s].set_color("#334155")
+        ax_h.spines["top"].set_visible(False)
+        ax_h.spines["right"].set_visible(False)
+
+        plt.tight_layout(pad=1.0)
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", dpi=120, bbox_inches="tight",
+                    facecolor="#0d1b2a", edgecolor="none")
+        plt.close(fig)
+        buf.seek(0)
+        return "data:image/png;base64," + base64.b64encode(buf.read()).decode()
+
+    except Exception as e:
+        logger.warning(f"Could not generate detail panel for finding {finding_idx}: {e}")
+        return None
+
+
+def _generate_detail_panels(
+    findings_data: list,
+    geo_findings: list,
+    thermal_result,
+) -> list:
+    """Build annotated detail panels for every KRITISK and HÖG finding (max 8)."""
+    # Lookup: thermal_anomaly_id → ThermalAnomaly
+    anomaly_by_id: dict = {}
+    if thermal_result and hasattr(thermal_result, "anomalies"):
+        for a in thermal_result.anomalies:
+            if hasattr(a, "anomaly_id"):
+                anomaly_by_id[a.anomaly_id] = a
+
+    # Lookup: finding_id → GeoFinding
+    geo_by_id = {gf.finding_id: gf for gf in geo_findings}
+
+    panels = []
+    count  = 0
+
+    for f_data in findings_data:
+        if f_data["severity"] not in ("KRITISK", "HÖG"):
+            continue
+        if count >= 8:
+            break
+
+        fid    = f_data["id"]
+        geo_f  = geo_by_id.get(fid)
+        src_img = (geo_f.source_image if geo_f and geo_f.source_image else "")
+
+        # Resolve thermal anomaly: finding IDs from thermal step start with "thermal_"
+        anomaly = None
+        if fid.startswith("thermal_"):
+            aid     = fid[len("thermal_"):]
+            anomaly = anomaly_by_id.get(aid)
+
+        # Determine anomaly subtype for explanation lookup
+        if anomaly:
+            atype = anomaly.anomaly_type          # "hotspot" | "cold_bridge"
+        elif f_data.get("source") == "Termisk":
+            atype = "hotspot"
+        else:
+            atype = "default"
+
+        explanation = _get_defect_explanation(f_data.get("type_raw", "anomaly"), atype)
+
+        img_b64 = None
+        if src_img:
+            img_b64 = _generate_finding_detail_panel(f_data, src_img, anomaly, count)
+
+        # Temperature values (from anomaly if available, else estimate)
+        max_t   = float(anomaly.max_temp)   if anomaly else None
+        delta_t = float(anomaly.delta_temp) if anomaly else None
+
+        panels.append({
+            "finding_id":    fid,
+            "idx":           count + 1,
+            "type":          f_data["type"],
+            "type_raw":      f_data.get("type_raw", ""),
+            "severity":      f_data["severity"],
+            "severity_color":f_data["severity_color"],
+            "source":        f_data["source"],
+            "confidence_pct":f_data["confidence_pct"],
+            "area_m2":       f_data.get("area_m2"),
+            "lat":           f_data.get("lat"),
+            "lon":           f_data.get("lon"),
+            "action":        f_data.get("action", ""),
+            "urgency_weeks": f_data.get("urgency_weeks"),
+            "cost_sek":      f_data.get("cost_sek", "–"),
+            "description":   f_data.get("description", ""),
+            "explanation":   explanation,
+            "max_temp":      max_t,
+            "delta_temp":    delta_t,
+            "annotated_image": img_b64,
+            "has_image":     img_b64 is not None,
+        })
+        count += 1
+
+    return panels
+
+
 class ReportGenerator:
     """Generates professional PDF inspection reports."""
 
@@ -423,12 +825,18 @@ class ReportGenerator:
                 "lat": f.lat,
                 "lon": f.lon,
                 "area_m2": f.area_m2,
+                "bbox": f.bbox,
                 "description": f.description,
                 "action": f.action_recommendation,
                 "urgency_weeks": f.urgency_weeks,
                 "cost_sek": f"{f.estimated_cost_sek:,}".replace(",", " ") if f.estimated_cost_sek else "–",
                 "cost_raw": f.estimated_cost_sek or 0,
             })
+
+        # Detail panels (annotated images + explanations for KRITISK/HÖG)
+        detail_panels = _generate_detail_panels(
+            findings_data, analysis_result.findings, thermal_result
+        )
 
         # Action plan: top findings by severity and urgency
         severity_order = {"KRITISK": 0, "HÖG": 1, "MEDEL": 2, "LÅG": 3}
@@ -451,6 +859,7 @@ class ReportGenerator:
             temp_chart=temp_chart,
             map_image=map_image,
             comparisons=comparisons,
+            detail_panels=detail_panels,
             logo_svg=logo_svg,
             total_cost=f"{total_cost:,}".replace(",", " "),
         )
