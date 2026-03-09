@@ -1,0 +1,1 @@
+"""SmartTek API."""

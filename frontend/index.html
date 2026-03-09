@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartTek AB – Drönbaserad Fastighetsinspektion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0d1b2a;
+      --navy-2:  #1a2744;
+      --navy-3:  #243852;
+      --slate:   #334155;
+      --muted:   #64748b;
+      --light:   #94a3b8;
+      --white:   #f0f4f8;
+      --accent:  #00d4aa;
+      --accent2: #00a884;
+      --kritisk: #9b1d1d;
+      --hog:     #b5451b;
+      --medel:   #c87d2f;
+      --lag:     #2d6a4f;
+      --radius:  8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(13,27,42,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .logo-text {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 18px;
+      color: var(--white);
+    }
+
+    .nav-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      padding-top: 120px;
+      padding-bottom: 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,212,170,0.1);
+      border: 1px solid rgba(0,212,170,0.3);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 1.05;
+      max-width: 820px;
+      margin: 0 auto 20px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--light);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+    }
+
+    /* ── GRID ────────────────────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── FEATURES ────────────────────────────────────────────── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 60px auto;
+      max-width: 900px;
+      padding: 0 32px;
+    }
+
+    .feature-card {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(0,212,170,0.3);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--white);
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--light);
+      line-height: 1.5;
+    }
+
+    /* ── PIPELINE DEMO SECTION ───────────────────────────────── */
+    .demo-section {
+      max-width: 780px;
+      margin: 0 auto 80px;
+      padding: 0 32px;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .demo-section h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .demo-section > p {
+      color: var(--light);
+      margin-bottom: 32px;
+      font-size: 15px;
+    }
+
+    /* ── FORM ────────────────────────────────────────────────── */
+    .demo-card {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .radio-option {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid var(--slate);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radio-option:hover { border-color: var(--accent); }
+    .radio-option.selected {
+      border-color: var(--accent);
+      background: rgba(0,212,170,0.06);
+    }
+
+    .radio-option input { display: none; }
+
+    .radio-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--slate);
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .radio-option.selected .radio-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .radio-label {
+      font-size: 13px;
+      color: var(--light);
+    }
+
+    .radio-option.selected .radio-label { color: var(--white); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: var(--radius);
+      color: var(--navy);
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,212,170,0.25);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── PROGRESS ────────────────────────────────────────────── */
+    #progress-section { display: none; }
+    #result-section   { display: none; }
+
+    .progress-card {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 24px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .progress-header h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+    }
+
+    .run-id-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--navy-3);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .pipeline-steps-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .pipeline-step-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .pipeline-step-row.active {
+      background: rgba(0,212,170,0.06);
+      border-color: rgba(0,212,170,0.2);
+    }
+
+    .pipeline-step-row.done {
+      background: rgba(45,106,79,0.08);
+      border-color: rgba(45,106,79,0.2);
+    }
+
+    .step-indicator {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .pipeline-step-row.active .step-indicator {
+      border-color: var(--accent);
+      color: var(--accent);
+      animation: pulse 1.5s infinite;
+    }
+
+    .pipeline-step-row.done .step-indicator {
+      background: var(--lag);
+      border-color: var(--lag);
+      color: white;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,170,0.3); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,212,170,0); }
+    }
+
+    .step-info { flex: 1; }
+
+    .step-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light);
+      display: block;
+    }
+
+    .pipeline-step-row.active .step-name { color: var(--white); }
+    .pipeline-step-row.done .step-name   { color: var(--light); }
+
+    .step-tool {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .step-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+    }
+
+    .pipeline-step-row.active .step-status { color: var(--accent); }
+    .pipeline-step-row.done  .step-status  { color: var(--lag); }
+
+    /* Global progress bar */
+    .global-progress {
+      margin-top: 8px;
+    }
+
+    .global-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      height: 6px;
+      background: var(--slate);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── RESULT ──────────────────────────────────────────────── */
+    .result-card {
+      background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(45,106,79,0.06));
+      border: 1px solid rgba(0,212,170,0.3);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .result-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .result-card h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .result-card p {
+      color: var(--light);
+      margin-bottom: 24px;
+    }
+
+    .btn-report {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--accent);
+      border-radius: var(--radius);
+      color: var(--navy);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .btn-report:hover {
+      opacity: 0.9;
+      box-shadow: 0 6px 20px rgba(0,212,170,0.3);
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--slate);
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+    }
+
+    footer strong { color: var(--light); }
+
+    /* ── ERROR ───────────────────────────────────────────────── */
+    .error-card {
+      background: rgba(155,29,29,0.1);
+      border: 1px solid rgba(155,29,29,0.4);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: #f87171;
+    }
+
+    #error-section { display: none; }
+
+    @media (max-width: 640px) {
+      .features { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      .hero h1 { font-size: 32px; }
+      .nav-tagline { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-mark">ST</div>
+    <span class="logo-text">SmartTek</span>
+  </a>
+  <span class="nav-tagline">De flesta levererar bilder. Vi levererar svar.</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">Demo · Drönbaserad Fastighetsinspektion</div>
+  <h1>Precisionsinspektion av<br><span>fastigheter från luften</span></h1>
+  <p>Automatiserad RGB- och termisk analys med AI-detektering och georefererade rapporter.</p>
+</section>
+
+<div class="features">
+  <div class="feature-card">
+    <span class="feature-icon">🌡️</span>
+    <h3>Termisk analys</h3>
+    <p>Identifierar fuktintrång, köldbryggor och energiläckage med FLIR-sensorer och automatiserad tröskelanalys.</p>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">🤖</span>
+    <h3>AI-detektering</h3>
+    <p>YOLOv8-modell tränad på fastighetsbilder identifierar sprickor, vattenskador och avlösning med hög precision.</p>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">📋</span>
+    <h3>Professionell rapport</h3>
+    <p>Georefererade fynd med prioriterad åtgärdsplan, kostnadsuppskattning och PDF-rapport levereras direkt.</p>
+  </div>
+</div>
+
+<div class="demo-section">
+  <span class="section-label">Live Demo</span>
+  <h2>Kör inspektionspipelinen</h2>
+  <p>Starta en komplett pipeline-körning med exempeldata. Se alla 6 steg i realtid och ladda ner den färdiga rapporten.</p>
+
+  <div class="demo-card" id="form-card">
+    <div class="form-group">
+      <label>Datakälla</label>
+      <div class="radio-group">
+        <label class="radio-option selected" id="opt-sample" onclick="selectOption('sample')">
+          <input type="radio" name="datasource" value="sample" checked>
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">Exempeldata (rekommenderat)</div>
+            <div style="font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:2px;">
+              3 RGB-bilder + 2 termiska bilder – Göteborg
+            </div>
+          </div>
+        </label>
+        <label class="radio-option" id="opt-custom" onclick="selectOption('custom')">
+          <input type="radio" name="datasource" value="custom">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">Egna bilder</div>
+            <div style="font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:2px;">
+              Lägg filer i data/sample/
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="run-btn" onclick="startPipeline()">
+      Starta inspektionspipeline →
+    </button>
+  </div>
+
+  <div id="progress-section">
+    <div class="progress-card">
+      <div class="progress-header">
+        <h3>Pipeline körs...</h3>
+        <span class="run-id-badge" id="run-id-display">–</span>
+      </div>
+
+      <div class="pipeline-steps-visual" id="steps-visual">
+        <div class="pipeline-step-row" id="step-ingest">
+          <div class="step-indicator">1</div>
+          <div class="step-info">
+            <span class="step-name">Ingest – Validering och metadata</span>
+            <span class="step-tool">Pillow · piexif</span>
+          </div>
+          <span class="step-status" id="status-ingest">väntar</span>
+        </div>
+        <div class="pipeline-step-row" id="step-photogrammetry">
+          <div class="step-indicator">2</div>
+          <div class="step-info">
+            <span class="step-name">Fotogrammetri – Ortofoto</span>
+            <span class="step-tool">OpenDroneMap · WebODM</span>
+          </div>
+          <span class="step-status" id="status-photogrammetry">väntar</span>
+        </div>
+        <div class="pipeline-step-row" id="step-thermal">
+          <div class="step-indicator">3</div>
+          <div class="step-info">
+            <span class="step-name">Termisk extraktion</span>
+            <span class="step-tool">NumPy · FLIR</span>
+          </div>
+          <span class="step-status" id="status-thermal">väntar</span>
+        </div>
+        <div class="pipeline-step-row" id="step-detection">
+          <div class="step-indicator">4</div>
+          <div class="step-info">
+            <span class="step-name">AI-detektering</span>
+            <span class="step-tool">YOLOv8 · Ultralytics</span>
+          </div>
+          <span class="step-status" id="status-detection">väntar</span>
+        </div>
+        <div class="pipeline-step-row" id="step-analysis">
+          <div class="step-indicator">5</div>
+          <div class="step-info">
+            <span class="step-name">GIS-analys och prioritering</span>
+            <span class="step-tool">GeoPandas · Shapely</span>
+          </div>
+          <span class="step-status" id="status-analysis">väntar</span>
+        </div>
+        <div class="pipeline-step-row" id="step-report">
+          <div class="step-indicator">6</div>
+          <div class="step-info">
+            <span class="step-name">Rapportgenerering</span>
+            <span class="step-tool">WeasyPrint · Jinja2</span>
+          </div>
+          <span class="step-status" id="status-report">väntar</span>
+        </div>
+      </div>
+
+      <div class="global-progress">
+        <div class="global-progress-label">
+          <span>Framsteg</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-section">
+    <div class="error-card" id="error-msg">Pipeline misslyckades.</div>
+  </div>
+
+  <div id="result-section">
+    <div class="result-card">
+      <span class="result-icon">✅</span>
+      <h3>Rapport genererad!</h3>
+      <p>Inspektionspipelinen körde klart. Din rapport är redo.</p>
+      <a class="btn-report" id="report-link" href="#" target="_blank">
+        Öppna inspektionsrapport (PDF) →
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>SmartTek AB</strong> · Göteborg, Sverige ·
+  De flesta levererar bilder. Vi levererar svar. ·
+  All data behandlad inom Sverige
+</footer>
+
+<script>
+  const API_BASE = "http://localhost:8001/api";
+  let currentRunId = null;
+  let pollInterval = null;
+
+  const STEP_ORDER = ["ingest", "photogrammetry", "thermal", "detection", "analysis", "report"];
+  const completedSteps = new Set();
+
+  function selectOption(value) {
+    document.getElementById("opt-sample").classList.toggle("selected", value === "sample");
+    document.getElementById("opt-custom").classList.toggle("selected", value === "custom");
+  }
+
+  async function startPipeline() {
+    const btn = document.getElementById("run-btn");
+    btn.disabled = true;
+    btn.textContent = "Startar pipeline…";
+
+    // Reset UI
+    completedSteps.clear();
+    STEP_ORDER.forEach(s => {
+      const row = document.getElementById("step-" + s);
+      row.classList.remove("active", "done");
+      document.getElementById("status-" + s).textContent = "väntar";
+    });
+    document.getElementById("progress-bar").style.width = "0%";
+    document.getElementById("progress-pct").textContent = "0%";
+    document.getElementById("error-section").style.display = "none";
+    document.getElementById("result-section").style.display = "none";
+
+    document.getElementById("progress-section").style.display = "block";
+
+    try {
+      const resp = await fetch(API_BASE + "/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ use_sample_data: true }),
+      });
+
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const data = await resp.json();
+      currentRunId = data.run_id;
+      document.getElementById("run-id-display").textContent = data.run_id;
+
+      pollInterval = setInterval(pollStatus, 1500);
+    } catch (e) {
+      showError("Kunde inte nå API:et: " + e.message + "\n\nSe till att docker compose är igång.");
+      btn.disabled = false;
+      btn.textContent = "Starta inspektionspipeline →";
+    }
+  }
+
+  async function pollStatus() {
+    try {
+      const resp = await fetch(API_BASE + "/status/" + currentRunId);
+      if (!resp.ok) return;
+      const data = await resp.json();
+
+      // Update progress bar
+      const pct = data.progress || 0;
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-pct").textContent = pct + "%";
+
+      // Update steps
+      if (data.step) {
+        const currentIdx = STEP_ORDER.indexOf(data.step);
+        STEP_ORDER.forEach((s, i) => {
+          const row = document.getElementById("step-" + s);
+          const status = document.getElementById("status-" + s);
+          if (i < currentIdx || completedSteps.has(s)) {
+            row.classList.remove("active");
+            row.classList.add("done");
+            status.textContent = "✓ klar";
+            completedSteps.add(s);
+          } else if (s === data.step && data.status === "running") {
+            row.classList.add("active");
+            row.classList.remove("done");
+            status.textContent = "● körs";
+          }
+        });
+      }
+
+      if (data.status === "completed") {
+        clearInterval(pollInterval);
+        // Mark all as done
+        STEP_ORDER.forEach(s => {
+          document.getElementById("step-" + s).classList.add("done");
+          document.getElementById("step-" + s).classList.remove("active");
+          document.getElementById("status-" + s).textContent = "✓ klar";
+        });
+        document.getElementById("progress-bar").style.width = "100%";
+        document.getElementById("progress-pct").textContent = "100%";
+
+        if (data.report_url) {
+          document.getElementById("report-link").href = data.report_url;
+        }
+        document.getElementById("result-section").style.display = "block";
+        document.getElementById("run-btn").disabled = false;
+        document.getElementById("run-btn").textContent = "Kör igen →";
+      } else if (data.status === "failed") {
+        clearInterval(pollInterval);
+        showError("Pipeline misslyckades: " + (data.error || "okänt fel"));
+        document.getElementById("run-btn").disabled = false;
+        document.getElementById("run-btn").textContent = "Försök igen →";
+      }
+    } catch (e) {
+      console.error("Poll error:", e);
+    }
+  }
+
+  function showError(msg) {
+    const errSection = document.getElementById("error-section");
+    const errMsg = document.getElementById("error-msg");
+    errMsg.textContent = msg;
+    errSection.style.display = "block";
+  }
+</script>
+</body>
+</html>

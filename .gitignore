@@ -1,0 +1,38 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.env
+.venv/
+venv/
+ENV/
+
+# Data outputs - gitignored
+data/outputs/
+
+# Model weights (large files)
+models/crack_detection/*.pt
+models/crack_detection/*.onnx
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# WeasyPrint
+*.pdf
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage

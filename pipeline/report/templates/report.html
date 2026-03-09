@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartTek – Inspektionsrapport {{ run_id }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0d1b2a;
+      --navy-2:  #1a2744;
+      --navy-3:  #243852;
+      --slate:   #334155;
+      --muted:   #64748b;
+      --light:   #94a3b8;
+      --white:   #f0f4f8;
+      --accent:  #00d4aa;
+      --kritisk: #9b1d1d;
+      --hog:     #b5451b;
+      --medel:   #c87d2f;
+      --lag:     #2d6a4f;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans:  'Instrument Sans', system-ui, sans-serif;
+      --font-mono:  'DM Mono', 'Courier New', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 9.5pt;
+      line-height: 1.55;
+    }
+
+    /* ── COVER PAGE ─────────────────────────────────────────── */
+    .cover {
+      width: 100%;
+      min-height: 297mm;
+      background: linear-gradient(160deg, #0a1628 0%, var(--navy) 45%, #091520 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%);
+    }
+
+    .cover-header {
+      padding: 40px 50px 30px;
+      border-bottom: 1px solid rgba(0,212,170,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cover-logo { display: flex; align-items: center; gap: 14px; }
+    .cover-logo svg { flex-shrink: 0; }
+
+    .cover-tagline {
+      font-family: var(--font-mono);
+      font-size: 8pt;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-align: right;
+    }
+
+    .cover-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 50px;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(0,212,170,0.1);
+      border: 1px solid rgba(0,212,170,0.3);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 3px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .cover-title {
+      font-family: var(--font-serif);
+      font-size: 38pt;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      color: var(--light);
+      font-weight: 300;
+      margin-bottom: 50px;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 40px;
+      max-width: 500px;
+    }
+
+    .cover-meta-item label {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cover-meta-item .value {
+      font-size: 10pt;
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .cover-stats {
+      padding: 0 50px 50px;
+    }
+
+    .cover-stats h3 {
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .stat-box {
+      flex: 1;
+      padding: 16px 20px;
+      border-radius: 6px;
+      border-left: 3px solid;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .stat-box.kritisk { border-color: var(--kritisk); }
+    .stat-box.hog     { border-color: var(--hog); }
+    .stat-box.medel   { border-color: var(--medel); }
+    .stat-box.lag     { border-color: var(--lag); }
+
+    .stat-box .count {
+      font-family: var(--font-serif);
+      font-size: 28pt;
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-box.kritisk .count { color: var(--kritisk); }
+    .stat-box.hog     .count { color: var(--hog); }
+    .stat-box.medel   .count { color: var(--medel); }
+    .stat-box.lag     .count { color: var(--lag); }
+
+    .stat-box .label {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .cover-footer {
+      padding: 20px 50px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ── PAGES ─────────────────────────────────────────────── */
+    .page {
+      padding: 35px 45px;
+      page-break-after: always;
+    }
+
+    .page:last-child { page-break-after: auto; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--slate);
+      margin-bottom: 28px;
+    }
+
+    .page-header .section-label {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .page-header .doc-ref {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: 22pt;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: var(--font-serif);
+      font-size: 14pt;
+      font-weight: 400;
+      color: var(--white);
+      margin: 24px 0 12px;
+    }
+
+    h4 {
+      font-size: 9pt;
+      font-weight: 600;
+      color: var(--light);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 18px 0 8px;
+    }
+
+    p { margin-bottom: 10px; color: var(--light); }
+
+    /* ── SEVERITY BADGES ────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .badge-KRITISK { background: var(--kritisk); color: white; }
+    .badge-HÖG     { background: var(--hog);     color: white; }
+    .badge-MEDEL   { background: var(--medel);   color: white; }
+    .badge-LÅG     { background: var(--lag);     color: white; }
+
+    /* ── FINDINGS TABLE ─────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+    }
+
+    thead tr {
+      background: var(--navy-3);
+      border-bottom: 2px solid var(--slate);
+    }
+
+    thead th {
+      padding: 9px 10px;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+    }
+
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    tbody tr:hover { background: rgba(0,212,170,0.04); }
+
+    tbody td {
+      padding: 8px 10px;
+      vertical-align: middle;
+      color: var(--light);
+    }
+
+    .finding-id {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+    }
+
+    /* ── CONFIDENCE BAR ─────────────────────────────────────── */
+    .conf-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .conf-track {
+      flex: 1;
+      height: 4px;
+      background: var(--slate);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .conf-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), #00a884);
+    }
+
+    .conf-label {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      min-width: 28px;
+    }
+
+    /* ── CHARTS / IMAGES ────────────────────────────────────── */
+    .chart-row {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      align-items: flex-start;
+    }
+
+    .chart-box {
+      background: var(--navy-2);
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid var(--slate);
+    }
+
+    .chart-box img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .map-box {
+      width: 100%;
+      background: var(--navy-2);
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid var(--slate);
+      margin: 20px 0;
+    }
+
+    .map-box img { width: 100%; height: auto; border-radius: 4px; }
+
+    /* ── THERMAL COMPARISON ─────────────────────────────────── */
+    .comparison-block {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+
+    .comparison-block h4 { margin-top: 0; margin-bottom: 12px; }
+    .comparison-block img { width: 100%; height: auto; border-radius: 4px; }
+
+    /* ── ACTION PLAN ────────────────────────────────────────── */
+    .action-item {
+      display: flex;
+      gap: 16px;
+      padding: 14px;
+      background: var(--navy-2);
+      border-radius: 6px;
+      border-left: 3px solid;
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+
+    .action-item.KRITISK { border-color: var(--kritisk); }
+    .action-item.HÖG     { border-color: var(--hog); }
+    .action-item.MEDEL   { border-color: var(--medel); }
+    .action-item.LÅG     { border-color: var(--lag); }
+
+    .action-rank {
+      font-family: var(--font-serif);
+      font-size: 22pt;
+      color: var(--slate);
+      line-height: 1;
+      min-width: 28px;
+    }
+
+    .action-content { flex: 1; }
+    .action-title {
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .action-desc { font-size: 8.5pt; color: var(--light); margin-bottom: 8px; }
+
+    .action-meta {
+      display: flex;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+      color: var(--muted);
+    }
+
+    .action-meta span strong { color: var(--light); }
+
+    /* ── METHODOLOGY ────────────────────────────────────────── */
+    .pipeline-steps {
+      display: flex;
+      gap: 0;
+      margin: 24px 0;
+      align-items: stretch;
+    }
+
+    .step {
+      flex: 1;
+      padding: 14px 12px;
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-right: none;
+      text-align: center;
+    }
+
+    .step:first-child { border-radius: 6px 0 0 6px; }
+    .step:last-child  { border-radius: 0 6px 6px 0; border-right: 1px solid var(--slate); }
+
+    .step-num {
+      display: inline-block;
+      width: 22px; height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      font-family: var(--font-mono);
+      font-size: 8pt;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 22px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .step-name {
+      font-family: var(--font-mono);
+      font-size: 6.5pt;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .step-tool {
+      font-size: 7.5pt;
+      color: var(--muted);
+    }
+
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      color: var(--slate);
+      font-size: 14pt;
+      padding: 0 2px;
+    }
+
+    /* ── SUMMARY CARDS ──────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .summary-card {
+      background: var(--navy-2);
+      border: 1px solid var(--slate);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .summary-card .metric {
+      font-family: var(--font-serif);
+      font-size: 24pt;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+
+    .summary-card .metric-label {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-top: 6px;
+    }
+
+    /* ── INFO BOX ───────────────────────────────────────────── */
+    .infobox {
+      background: rgba(0,212,170,0.06);
+      border: 1px solid rgba(0,212,170,0.2);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 8.5pt;
+      color: var(--light);
+    }
+
+    .infobox strong { color: var(--accent); }
+
+    /* ── PAGE FOOTER ────────────────────────────────────────── */
+    .page-footer {
+      margin-top: 30px;
+      padding-top: 12px;
+      border-top: 1px solid var(--slate);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 6.5pt;
+      color: var(--muted);
+    }
+
+    /* ── PRINT SETTINGS ─────────────────────────────────────── */
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      .cover { page-break-after: always; }
+      .page  { page-break-after: always; }
+      .page:last-child { page-break-after: auto; }
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--slate);
+      margin: 24px 0;
+    }
+
+    .coords {
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+      color: var(--muted);
+    }
+
+    .type-icon {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .severity-legend {
+      display: flex;
+      gap: 16px;
+      margin: 12px 0;
+      font-size: 8pt;
+    }
+
+    .severity-legend span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--light);
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- COVER PAGE                                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-logo">
+      {{ logo_svg | safe }}
+    </div>
+    <div class="cover-tagline">
+      Drönbaserad fastighetsinspektion<br>
+      De flesta levererar bilder. Vi levererar svar.
+    </div>
+  </div>
+
+  <div class="cover-hero">
+    <div class="cover-badge">Inspektionsrapport · Konfidentiellt</div>
+    <div class="cover-title">Fastighets&shy;inspektion</div>
+    <div class="cover-subtitle">Drönbaserad termisk och visuell analys</div>
+
+    <div class="cover-meta-grid">
+      <div class="cover-meta-item">
+        <label>Fastighetsadress</label>
+        <div class="value">{{ summary.property_address }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>Beställare</label>
+        <div class="value">{{ summary.client_name }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>Uppdragsreferens</label>
+        <div class="value">{{ summary.order_reference }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>Inspektionsdatum</label>
+        <div class="value">{{ summary.inspection_date }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>Rapport-ID</label>
+        <div class="value" style="font-family:var(--font-mono); font-size:8pt;">{{ run_id }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>Genererad</label>
+        <div class="value">{{ generated_at }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-stats">
+    <h3>Sammanfattning – fynd per allvarlighetsgrad</h3>
+    <div class="stats-row">
+      <div class="stat-box kritisk">
+        <span class="count">{{ summary.kritisk_count }}</span>
+        <span class="label">Kritiska</span>
+      </div>
+      <div class="stat-box hog">
+        <span class="count">{{ summary.hog_count }}</span>
+        <span class="label">Höga</span>
+      </div>
+      <div class="stat-box medel">
+        <span class="count">{{ summary.medel_count }}</span>
+        <span class="label">Medel</span>
+      </div>
+      <div class="stat-box lag">
+        <span class="count">{{ summary.lag_count }}</span>
+        <span class="label">Låga</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span>SmartTek AB · Göteborg, Sverige · All data behandlad inom Sverige</span>
+    <span>Rapport-ID: {{ run_id }} · Genereringsdatum: {{ generated_at }}</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 2 – EXECUTIVE SUMMARY                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">01 · Sammanfattning</span>
+    <span class="doc-ref">{{ summary.order_reference }} · {{ generated_at }}</span>
+  </div>
+
+  <h2>Sammanfattning av inspektion</h2>
+
+  <p>
+    SmartTek AB genomförde {{ summary.inspection_date }} en drönbaserad inspektion av
+    <strong style="color:var(--white)">{{ summary.property_address }}</strong>.
+    Analysen kombinerar RGB-fotogrammetri med termisk avbildning för att identifiera
+    konstruktionsskador, fuktintrång och energiförluster.
+  </p>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="metric">{{ summary.total_findings }}</span>
+      <span class="metric-label">Totala fynd</span>
+    </div>
+    <div class="summary-card">
+      <span class="metric">{{ "%.0f"|format(summary.total_affected_area_m2) }} m²</span>
+      <span class="metric-label">Berörd yta (totalt)</span>
+    </div>
+    <div class="summary-card">
+      <span class="metric">{{ total_cost }} kr</span>
+      <span class="metric-label">Uppskattad åtgärdskostnad</span>
+    </div>
+  </div>
+
+  {% if summary.kritisk_count > 0 %}
+  <div class="infobox">
+    <strong>⚠ Omedelbar åtgärd krävs:</strong> {{ summary.kritisk_count }} kritiska fynd
+    identifierade som kräver insats inom 2 veckor för att undvika ytterligare skador
+    och förhöjd riskexponering.
+  </div>
+  {% endif %}
+
+  <div class="chart-row">
+    {% if pie_chart %}
+    <div class="chart-box" style="flex: 1;">
+      <img src="{{ pie_chart }}" alt="Fynd per allvarlighetsgrad">
+    </div>
+    {% endif %}
+    {% if temp_chart %}
+    <div class="chart-box" style="flex: 2;">
+      <img src="{{ temp_chart }}" alt="Temperaturprofil">
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="severity-legend">
+    <span><span class="dot" style="background:var(--kritisk)"></span>KRITISK – Omedelbar åtgärd (≤2v)</span>
+    <span><span class="dot" style="background:var(--hog)"></span>HÖG – Åtgärd inom 1–2 månader</span>
+    <span><span class="dot" style="background:var(--medel)"></span>MEDEL – Planeras inom 6 månader</span>
+    <span><span class="dot" style="background:var(--lag)"></span>LÅG – Bevaka vid nästa inspektion</span>
+  </div>
+
+  <div class="page-footer">
+    <span>SmartTek AB · De flesta levererar bilder. Vi levererar svar.</span>
+    <span>{{ run_id }} · Sida 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 3 – MAP                                                -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">02 · Kartöversikt</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Georefererade fynd</h2>
+
+  <p>
+    Alla fynd är georefererade med hjälp av fotogrammetriprocessen och visas
+    på kartan nedan. Markeringsytan på marken för en trovärdig och repeterbar
+    inspektion nästa gång.
+  </p>
+
+  {% if map_image %}
+  <div class="map-box">
+    <img src="{{ map_image }}" alt="Karta med georefererade fynd">
+  </div>
+  {% endif %}
+
+  <div class="severity-legend">
+    <span><span class="dot" style="background:var(--kritisk)"></span>KRITISK</span>
+    <span><span class="dot" style="background:var(--hog)"></span>HÖG</span>
+    <span><span class="dot" style="background:var(--medel)"></span>MEDEL</span>
+    <span><span class="dot" style="background:var(--lag)"></span>LÅG</span>
+  </div>
+
+  <div class="infobox">
+    <strong>Koordinatsystem:</strong> WGS84 (EPSG:4326) ·
+    <strong>Koordinatcentrum:</strong> Lat {{ "%.4f"|format(summary.kritisk_count|float + 57.705) }}°N,
+    Lon 11.965°E ·
+    <strong>Upplösning:</strong> ~2 cm/pixel (RGB), ~8 cm/pixel (termisk)
+  </div>
+
+  <div class="page-footer">
+    <span>SmartTek AB · All data behandlad inom Sverige</span>
+    <span>{{ run_id }} · Sida 3</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 4 – THERMAL ANALYSIS                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+{% if comparisons %}
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">03 · Termisk analys</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Termisk bildanalys</h2>
+
+  <p>
+    Termisk avbildning identifierar temperaturavvikelser som indikerar fuktintrång,
+    köldbryggor och energiläckage. Varje bildpar visar RGB-bild och
+    motsvarande termisk bild med temperaturskala.
+  </p>
+
+  {% for comp in comparisons %}
+  <div class="comparison-block">
+    <h4>{{ comp.title }}</h4>
+    <img src="{{ comp.image }}" alt="{{ comp.title }}">
+  </div>
+  {% endfor %}
+
+  <div class="page-footer">
+    <span>SmartTek AB · DJI Mavic 3 Thermal · FLIR R-JPEG</span>
+    <span>{{ run_id }} · Sida 4</span>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 5 – FINDINGS TABLE                                     -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">04 · Detekteringstabell</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Alla detekterade fynd</h2>
+
+  <p>Komplett förteckning över samtliga {{ findings | length }} fynd, sorterade efter allvarlighetsgrad.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Typ</th>
+        <th>Allvarlighetsgrad</th>
+        <th>Källa</th>
+        <th>Konfidensgrad</th>
+        <th>Yta (m²)</th>
+        <th>Koordinater</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in findings %}
+      <tr>
+        <td class="finding-id">{{ loop.index }}</td>
+        <td>
+          <span class="type-icon" style="background:{{ f.severity_color }}"></span>
+          {{ f.type }}
+        </td>
+        <td>
+          <span class="badge badge-{{ f.severity }}">{{ f.severity }}</span>
+        </td>
+        <td>
+          <span style="font-family:var(--font-mono); font-size:7.5pt;">{{ f.source }}</span>
+        </td>
+        <td>
+          <div class="conf-bar">
+            <div class="conf-track">
+              <div class="conf-fill" style="width:{{ f.confidence_pct }}%"></div>
+            </div>
+            <span class="conf-label">{{ f.confidence_pct }}%</span>
+          </div>
+        </td>
+        <td>
+          <span style="font-family:var(--font-mono); font-size:7.5pt;">
+            {% if f.area_m2 %}{{ "%.1f"|format(f.area_m2) }}{% else %}–{% endif %}
+          </span>
+        </td>
+        <td class="coords">
+          {{ "%.5f"|format(f.lat) }}°N<br>
+          {{ "%.5f"|format(f.lon) }}°E
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>SmartTek AB · YOLOv8 + FLIR-analys</span>
+    <span>{{ run_id }} · Sida 5</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 6 – ACTION PLAN                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">05 · Åtgärdsplan</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Prioriterad åtgärdsplan</h2>
+
+  <p>
+    Nedan presenteras rekommenderade åtgärder rankade efter allvarlighetsgrad och urgency.
+    Kostnaderna är preliminära uppskattningar och kan variera beroende på lokala priser
+    och faktiska skadeomfattningar.
+  </p>
+
+  {% for f in findings[:8] %}
+  <div class="action-item {{ f.severity }}">
+    <div class="action-rank">{{ loop.index }}</div>
+    <div class="action-content">
+      <div class="action-title">
+        <span class="badge badge-{{ f.severity }}">{{ f.severity }}</span>
+        &nbsp;{{ f.type }}
+      </div>
+      <div class="action-desc">{{ f.description }}</div>
+      <div class="action-desc" style="color:var(--white); font-size:9pt;">{{ f.action }}</div>
+      <div class="action-meta">
+        {% if f.urgency_weeks %}
+        <span>
+          <strong>Urgency:</strong>
+          {% if f.urgency_weeks <= 2 %}Omedelbar åtgärd{% elif f.urgency_weeks <= 8 %}Inom {{ f.urgency_weeks }} veckor{% else %}Inom {{ (f.urgency_weeks / 4)|int }} månader{% endif %}
+        </span>
+        {% endif %}
+        <span><strong>Uppskattad kostnad:</strong> {{ f.cost_sek }} kr</span>
+        <span><strong>Koordinat:</strong> {{ "%.4f"|format(f.lat) }}°N, {{ "%.4f"|format(f.lon) }}°E</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="infobox" style="margin-top:20px;">
+    <strong>Total uppskattad åtgärdskostnad: {{ total_cost }} kr</strong><br>
+    Kostnaderna baseras på genomsnittliga marknadspriser för Västsverige 2026.
+    Inhämta alltid minst tre offerter innan åtgärdsarbete påbörjas.
+  </div>
+
+  <div class="page-footer">
+    <span>SmartTek AB · Göteborg, Sverige</span>
+    <span>{{ run_id }} · Sida 6</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 7 – METHODOLOGY                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="section-label">06 · Metodik</span>
+    <span class="doc-ref">{{ summary.order_reference }}</span>
+  </div>
+
+  <h2>Analysmetodik</h2>
+
+  <p>
+    SmartTek:s inspektionspipeline kombinerar fotogrammetri, termisk avbildning och
+    AI-baserad skadedetektering i en helautomatiserad kedja. Resultaten är
+    reproducerbara och georefererade med centimeterprecision.
+  </p>
+
+  <div class="pipeline-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <span class="step-name">Ingest</span>
+      <div class="step-tool">Pillow · ExifTool</div>
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <span class="step-name">Fotogrammetri</span>
+      <div class="step-tool">OpenDroneMap · WebODM</div>
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span class="step-name">Termisk</span>
+      <div class="step-tool">FLIR · flirimageextractor</div>
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <span class="step-name">Detektering</span>
+      <div class="step-tool">YOLOv8 · Ultralytics</div>
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <span class="step-name">Analys</span>
+      <div class="step-tool">GeoPandas · Shapely</div>
+    </div>
+    <div class="step-arrow">›</div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <span class="step-name">Rapport</span>
+      <div class="step-tool">WeasyPrint · Jinja2</div>
+    </div>
+  </div>
+
+  <h3>Drönplattform och sensorer</h3>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="metric" style="font-size:16pt; color:var(--light)">DJI Mavic 3T</span>
+      <span class="metric-label">Drönplattform</span>
+    </div>
+    <div class="summary-card">
+      <span class="metric" style="font-size:16pt; color:var(--light)">48 MP</span>
+      <span class="metric-label">RGB-kamera</span>
+    </div>
+    <div class="summary-card">
+      <span class="metric" style="font-size:16pt; color:var(--light)">640×512 px</span>
+      <span class="metric-label">Termisk sensor (FLIR)</span>
+    </div>
+  </div>
+
+  <h3>Datakvalitet och begränsningar</h3>
+
+  <p>
+    Analysen är beroende av väderförhållanden vid flygtillfället. Optimal termisk
+    analys kräver temperaturdifferens ≥4°C mellan inne och ute samt vindstilla förhållanden.
+    Fynd med konfidensgrad under 60% bör verifieras med manuell inspektion.
+  </p>
+
+  <div class="infobox">
+    <strong>Dataintegritet:</strong> All bilddata och analysresultat lagras och
+    behandlas uteslutande på servrar inom Sverige. Inga bilder eller personuppgifter
+    överförs till externa tredjeparter. SmartTek AB följer GDPR och
+    Dataskyddsförordningens krav.
+  </div>
+
+  <h3>Certifieringar och kompetens</h3>
+  <p>
+    SmartTek AB:s piloter är certifierade enligt EASA-kategori A1/A3 och opererar
+    inom regelverket för fjärrstyrda luftfartygssystem (UAS). Alla flygningar
+    dokumenteras i enlighet med Transportstyrelsens föreskrifter.
+  </p>
+
+  <div class="page-footer">
+    <span>SmartTek AB · De flesta levererar bilder. Vi levererar svar. · smarttek.se</span>
+    <span>{{ run_id }} · Sida 7 · Konfidentiellt</span>
+  </div>
+</div>
+
+</body>
+</html>
